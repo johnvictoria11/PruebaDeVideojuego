@@ -1,78 +1,76 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
 int main()
-{	
+{
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	//-------------------------------INITIALIZE-------------------------------
-	//Create a Window
-	sf::RenderWindow window(sf::VideoMode(800, 600), "MY WINDOW", sf::Style::Default, settings);
-	//Create a circle
-	sf::CircleShape circle(50.f);
-	//Set a position
-	circle.setPosition(sf::Vector2f(100, 100));
-	//Put a color
-	circle.setFillColor(sf::Color::Green);
-	//Set an outline
-	circle.setOutlineThickness(10);
-	//Set a color outline
-	circle.setOutlineColor(sf::Color::Blue);
 
+	sf::RenderWindow window(sf::VideoMode(800, 600), "VideoGame", sf::Style::Default, settings);
 
-	//Create a Rectangle
-	sf::RectangleShape rectangle(sf::Vector2f(100, 50));
-	rectangle.setPosition(sf::Vector2f(100, 100));
-	rectangle.setFillColor(sf::Color::Red);
-	//Set a rotation
-	rectangle.setRotation(40);
+	// LOAD THE CHARACTER
+	sf::Texture playerTexture;
+	sf::Sprite playerSprite;
 
-	//Drawing a polygon there are more shape at the page of SFML 
-	//Rhombus
-	sf::CircleShape rhombus(80.0f, 4);
-	rhombus.setPosition(sf::Vector2f(400,300));
-	rhombus.setFillColor(sf::Color::Yellow);
+	if (playerTexture.loadFromFile("Assets/Player/Textures/spritesheet.png"))
+	{
+		std::cout << "Sprite cargado correctamente" << std::endl;
+		playerSprite.setTexture(playerTexture);
 
-	//Line
-	sf::RectangleShape line(sf::Vector2f(150.f, 1.f));
-	line.setPosition(sf::Vector2f(100, 200));
-	line.rotate(45.f);
+		//X,Y,Widht, Height
+		int xIndex = 7;
+		int yIndex = 3;
 
+		//This function select only a rectangle of the spritesheet
+		playerSprite.setTextureRect(sf::IntRect(xIndex*64, yIndex*64, 64, 64));
 
-	//-------------------------------INITIALIZE-------------------------------
+		//This function will scale the sprite
+		playerSprite.scale(sf::Vector2f(2,2));
+	}
 
-	//Run the program as long as the window is open
+	else
+	{
+		std::cout << "Sprite no cargado" << std::endl;
+	}
+
 	while (window.isOpen())
 	{
-
-		//-------------------------------UPDATE-------------------------------
-		//check all the window's events that were triggered since the last iteration of the loop
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-
-			//close window
 			if (event.type == sf::Event::Closed)
 				window.close();
-
 		}
-		//-------------------------------UPDATE--------------------------------
-		
 
-		//-------------------------------DRAW----------------------------------
-		//clear the window with black color
+		sf::Vector2f position = playerSprite.getPosition();
 
+		//This code helps to move to the right the character
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			playerSprite.setPosition(position + sf::Vector2f(0.05, 0));
+		}
+		//This code helps to move to the left the character
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			playerSprite.setPosition(position + sf::Vector2f(-0.05, 0));
+		}
+		//This code helps to move down the character
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			playerSprite.setPosition(position + sf::Vector2f(0, 0.05));
+		}
+		//This code helps to move up the character
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			
+			playerSprite.setPosition(position + sf::Vector2f(0, -0.05));
+		}
+
+		// Dibujar el sprite
 		window.clear(sf::Color::Black);
-
-		//Draw whatever you want
-		window.draw(circle);
-		window.draw(rectangle);
-		window.draw(rhombus);
-		window.draw(line);
-		
-
-		//end the current frame
+		window.draw(playerSprite);
 		window.display();
-
-		//-------------------------------DRAW----------------------------------
 	}
+
 	return 0;
 }
